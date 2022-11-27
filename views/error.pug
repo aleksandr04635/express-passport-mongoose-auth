@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h2 #{error.status}
+  h2 #{message}
+  p.err We don't have this page
+  pre #{error.stack}

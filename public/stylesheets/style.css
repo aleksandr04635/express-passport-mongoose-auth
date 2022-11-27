@@ -1,0 +1,136 @@
+*{
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+.con1 {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+.container {
+  max-width: 900px;
+    background-color: rgb(249, 249, 249);
+    height: 100%;
+    padding: 10px;
+}
+.navbar-header{
+  max-width: 900px;
+  background-color: rgb(232, 232, 232);
+  border: 1px solid black;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  z-index:1;
+}
+.navbar-header, .container{
+  float: left;
+  width: 100%;
+}
+.navbar-right{
+  float: right;
+}
+.navbar-left{
+  float: left;
+}
+.navbar-header a {
+  float: left;
+  color: #601515;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-size: 19px;
+ /* background-color: rgba(239, 248, 250, 0.956);*/
+}
+.navbar-header a:not(#great):hover {
+  background-color: rgb(210, 210, 210);
+}
+.p1{
+  border-right: 1px solid black;
+}
+.p2{
+  border-left: 1px solid black;
+}
+.navbar-header #great{
+  font-weight: 700;
+  color: #ce1919;
+}
+
+@media screen and (max-width: 600px) {
+  .navbar-header{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(232, 232, 232);
+    border: 0px solid black;
+   /* box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2), 0 0px 0px 0 rgba(0, 0, 0, 0.19);*/
+  }
+  .navbar-right{
+    float: left;
+    display: flex;
+    flex-direction: column;
+  }
+  .navbar-left{
+    float: left;
+    display: flex;
+    flex-direction: column;
+  }
+  .p1, .p2{
+    border: 0px solid rgb(211, 33, 33);
+  }
+}
+
+
+.err{
+  color: #cf2929;
+}
+
+/* .form {
+  position: relative;
+} 
+*/
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+#cont {
+    position: relative;
+    height:  50px;
+}
+form i {
+position: absolute;
+  top: 10px;
+/*  left: 240px; */
+/*    margin-left: 240px; */
+    cursor: pointer;
+    z-index: 2;
+}

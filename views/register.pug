@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  .container2
+    form.form-signin(role='form', action="/register",method="post", style='max-width: 300px;')
+      h2.form-signin-heading Sign Up here
+      label(for='name') Name:
+      br
+      input.form-control(type='text', name="name", placeholder='Your Name' , value=name)
+      br
+      label(for='username') Username:
+      br
+      input.form-control(type='text', name="username", placeholder='Your Username' , value=username)
+      br
+      label(for='password') Password:
+      br
+      div#cont
+        input#pas.form-control(type='password', name="password", placeholder='Your Password' , value=password)
+        i#togglePassword.bi.bi-eye-slash  
+      button.btn.btn-lg.btn-primary.btn-block(type='submit') Sign Up
+      p Already have an account? 
+       a(href='/register') Sign in
+
+  if errors
+    ul.err
+      for error in errors
+        li!=  error.msg + '. You entered ' + error.param + " = " +error.value 
+  if err
+   p.err=err
+
+//-dl
+      each book in genre_books
+        dt
+          a(href=book.url) #{book.title}
+        dd #{book.summary}
+      else
+        p This genre has no books
+       

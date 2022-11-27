@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  .container2
+    form.form-signin(role='form', action='/login', method='post')
+      h2.form-signin-heading Please sign in
+      label.sr-only(for='inputEmail')
+      label(for='username') Username:
+      br
+      input.form-control(type='text', name='username', id='inputEmail', placeholder='Username', required, autofocus , value=username)
+      br
+      label(for='password') Password:
+      br
+      div#cont
+        input#pas.form-control(type='password', name='password',  placeholder='Password' , value=password)
+        i#togglePassword.bi.bi-eye-slash 
+      button.btn.btn-lg.btn-primary.btn-block(type='submit') LOGIN
+      p Don't have an account? 
+       a(href='/register') Sign up
+    if errors
+      ul.err
+        for error in errors
+          li!=  error.msg + '. You entered ' + error.param + " = " +error.value     
+    if failureMessage
+      p.err=failureMessage
+    if err
+      p.err=err

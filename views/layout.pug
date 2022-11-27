@@ -1,0 +1,70 @@
+doctype html
+html
+  head
+    title= title
+    meta( charset="UTF-8" )
+    meta(name="viewport" content="width=device-width, initial-scale=1.0" )
+    meta( http-equiv="X-UA-Compatible" content="ie=edge" )
+    link(rel='stylesheet', href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css")
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
+  body
+    div.con1
+      div.navbar-header
+        div.navbar-left
+              a.p1(href='/') Main
+              a.p1(href='/restricted') Restricted
+              a.p1(href='https://www.google.com/search?client=firefox-b-d&q=weather', target='blank') Weather
+        div.navbar-right
+            if (!user)
+                a.p1.p2(href='/login') Login
+                a(href='/register') Register
+            if (user)
+                a.p1#great Welcome #{user.name}
+                a(href='/logout') Logout
+      div.container
+        div.content
+          block content
+
+    script(src='/javascripts/script.js'  defer)
+ 
+
+//-doctype html
+//-html
+  head
+    title= title
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymous')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css', integrity='sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp', crossorigin='anonymous')
+    link(rel='stylesheet', href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css")
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
+  body
+    nav.navbar.navbar-default
+      div.container-fluid
+        div.navbar-header
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/') Main
+          a.navbar-brand(href='/restricted') Restricted
+          a.navbar-brand(href='https://www.google.com/search?client=firefox-b-d&q=weather', target='blank') Weather
+        div.collapse.navbar-collapse(id='bs-example-navbar-collapse-1')
+          ul.nav.navbar-nav.navbar-right
+            if (!user)
+              li
+                a(href='/login') Login
+              li
+                a(href='/register') Register
+            if (user)
+              li
+                a Welcome #{user.name}
+              li
+                a(href='/logout') Logout
+    div.container
+      div.content
+        block content
+
+    script(src='/javascripts/script.js'  defer)
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')
