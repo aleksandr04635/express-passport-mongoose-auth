@@ -8,6 +8,7 @@
     "dev": "SET DEBUG=node-passport-auth:* & nodemon ./bin/www"
   },
   "dependencies": {
+    "async": "^3.2.4",
     "connect-ensure-login": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "~1.4.4",

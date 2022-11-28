@@ -13,8 +13,8 @@ html
       div.navbar-header
         div.navbar-left
               a.p1(href='/') Main
-              a.p1(href='/restricted') Restricted
-              a.p1(href='https://www.google.com/search?client=firefox-b-d&q=weather', target='blank') Weather
+              a.p1(href='/createpage') Create a post
+              a.p1(href='https://www.google.com/search?client=firefox-b-d&q=weather', target='blank') Local weather
         div.navbar-right
             if (!user)
                 a.p1.p2(href='/login') Login
@@ -25,6 +25,8 @@ html
       div.container
         div.content
           block content
+
+
 
     script(src='/javascripts/script.js'  defer)
  

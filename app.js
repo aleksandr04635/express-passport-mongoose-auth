@@ -12,8 +12,8 @@ var LocalStrategy = require('passport-local').Strategy;
 const MongoStore = require('connect-mongo');
 const { v4: uuidv4 } = require('uuid');//id
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/mainRouter.js');
+//var usersRouter = require('./routes/users');
 
 if (process.env.NODE_ENV !== "production") {
   // Load environment variables from .env file in non prod environments
@@ -79,7 +79,7 @@ app.use(passport.session());
 //app. use((req, res, next) => { const { headers: { cookie } } = req; if (cookie) { const values = cookie.split(';') ; console.log(values)}; next();});
 //app. use((req, res, next) => { const { session } = req;   console.log(session); next();});
 
-var User = require('./models/User');
+var User = require('./models/UserModel');
 //passport.use(new LocalStrategy (authUser)) // without passportLocalMongoose
 // ^The "authUser" is a function that we will define later will contain the steps to authenticate a user, and will return the "authenticated user".
 //passport.use(new LocalStrategy(User.authenticate()));//<- with passportLocalMongoose it works too, deprecated
@@ -131,7 +131,7 @@ app.use(printData) //user printData function as middleware to print populated va
 */
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

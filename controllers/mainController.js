@@ -1,8 +1,10 @@
 var mongoose = require("mongoose");
 var passport = require("passport");
+var async = require('async');
 const { check, validationResult } = require('express-validator');
 
-var User = require("../models/User");
+var User = require("../models/UserModel.js");
+var Post = require("../models/PostModel.js");
 
 var userController = {};
 
@@ -17,7 +19,14 @@ userController.home = function(req, res) {
   if (req.user){
     mes1=`Hello, user ${req.user.username}. Your session ID is ${req.sessionID} and your session expires in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} minutes.`;
   }
-  return res.render('index', {  title : "Authentication example", user : req.user , mes: mes1});
+  Post.find()
+  .populate('author')
+  .exec(function (err, posts) {
+    if (err) { return next(err); }
+    return res.render('index', {  title : "Authentication example", user : req.user , mes: mes1, posts:posts});
+  });
+   //let posts=await Post.find({});
+  //return res.render('index', {  title : "Authentication example", user : req.user , mes: mes1, posts:posts});
 };
 
 // Go to registration page
@@ -32,13 +41,16 @@ check('username').trim().isLength({ min: 2 }).withMessage('Username Must Be at L
 check('password').trim().isLength({ min: 2 }).withMessage('Password Must Be at Least 2 Characters').escape(),
 function(req, res, next) {
   const errors = validationResult(req);
+  console.log("error 1= " );
+  console.log(errors);
   if (!errors.isEmpty()) { 
     return res.render('register', {title: "Registration page", name: req.body.name, username : req.body.username, password: req.body.password, errors: errors.array()});
   }else{
   User.register(new User({username : req.body.username, name: req.body.name }), req.body.password, function(err, user) {
     if (err) {
-      console.log("error = " +err);
-      if(err="UserExistsError: A user with the given username is already registered"){
+      console.log("error 2= " +err);
+      console.log(req.body.password);
+      if(err=="UserExistsError: A user with the given username is already registered"){
         return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, password: req.body.password, user : user , err: "A user with the given username is already registered"})
       }else{
         return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, password: req.body.password, user : user , err: err});
@@ -81,7 +93,14 @@ passport.authenticate('local', {
 */
 // Go to login page
 userController.login = function(req, res, next) {
-  res.render('login', { title : "Login page", });
+  let mes ="";
+  if(req.session.message){
+    mes = req.session.message;
+    delete req.session.message;
+  }
+  //console.log(req.session.message);
+  
+  res.render('login', { title : "Login page", err: mes});
 }
 
 // Post login based on https://stackoverflow.com/questions/13335881/redirecting-to-previous-page-after-authentication-in-node-js-using-passport-js
@@ -172,6 +191,7 @@ https://stackoverflow.com/questions/13335881/redirecting-to-previous-page-after-
 userController.restrictor = function(req, res, next){
     if (!req.isAuthenticated()) {
         req.session.redirectTo = req.originalUrl; 
+        req.session.message = "You must be signed in to do it"
         return res.redirect('/login');
     } else {
         return next();
@@ -192,8 +212,32 @@ userController.restrict = function(req, res, next) {
 }
 */
 
-userController.restricted = function(req, res) {
-  return res.render('restricted', { title : "Restricted access page" , name : req.user.name, user : req.user});
+userController.createPage = function(req, res) {
+  return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, user : req.user});
 }
+
+userController.createPost = [ 
+  check('title').trim().isLength({ min: 2 }).withMessage('Title Must Be at Least 2 Characters').escape(),
+  check('content1').trim().isLength({ min: 2 }).withMessage('Content Must Be at Least 2 Characters').escape(),
+  function(req, res, next) {
+    const errors = validationResult(req);
+    console.log(errors);
+    console.log(errors.isEmpty());
+    console.log(req.user);
+  if (!errors.isEmpty()) { 
+      return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
+      user : req.user, postTitle:req.body.title, postContent: req.body.content1, errors: errors.array()});
+  }else{
+    let post = new Post(  { title: req.body.title, content: req.body.content1, author:req.user._id}    );
+    console.log(post);
+    post.save(function (err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
+    //return res.redirect('/');
+  //return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
+   // user : req.user, postTitle:req.body.title, postContent: req.body.content1});
+}}
+]
 
 module.exports = userController;

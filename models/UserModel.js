@@ -3,9 +3,10 @@ var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
 var UserSchema = new Schema({
-    username: String,
+    username: {type: String, required: true},
+   // password: {type: String, required: true},
     password: String,
-    name: String,
+    name: {type: String, required: true},
   },
     { timestamps: true }
  //   timestamps – this is used to tell Mongoose to add c
@@ -16,6 +17,13 @@ var UserSchema = new Schema({
     }
     */
 );
+
+// Virtual for genres URL
+UserSchema
+.virtual('url')
+.get(function () {
+  return '/users/' + this._id;
+});
 // Passport-local-mongoose automatically salts and hashes passwords.
 UserSchema.plugin(passportLocalMongoose);
 

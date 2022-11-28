@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h2 Restricted access page to create a post
+  p Only for registered users
+  p Welcome, user #{name}
+  //-p Create a post 
+  form(role='form', action='/createpage', method='post')
+      h2 Create a post
+      label(for='title') Post title:
+      br
+      input(type='text', name='title', id='title', placeholder='title', required='true' , autofocus , value=(undefined===postTitle ? '' : postTitle))
+      br
+      label(for='content1') Post content:
+      br
+      textarea(type='textarea', name='content1',  id='contentt', placeholder='content' , required='true' ) #{undefined===postContent ? '' : postContent}
+      br
+      button.btn.btn-lg.btn-primary.btn-block(type='submit') Create a post
+  if errors
+    ul.err
+      for error in errors
+        li!=  error.msg + '. You entered ' + error.param + " = " +error.value 

@@ -1,8 +1,25 @@
 extends layout
 
 block content
-  h2 Node.js, Express.js, Mongoose.js and Passport.js
-  h3 User Authentication Example
-  br
+  h3 A tutorial example of a blog with user authentication build with Node.js/Express, Mongoose and Passport with passport-local-mongoose
+  //-br
+  p You can change your browser window width to see adaptiveness of design
   if mes
    p #{mes}
+  h3 All posts:
+  if posts
+    //-ul
+    for post in posts
+      //-li
+      div
+        div
+          a(href=post.url)   
+           h3=post.title  
+          | by author :
+          a(href=post.author.url) #{ post.author.name  }
+        //- | #{" by author : "+ post.author.name }
+        //- | #{" with: "+ post.url }
+        p #{" content: " +post.content }
+        //-p #{post.content }
+
+
