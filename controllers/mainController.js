@@ -19,8 +19,11 @@ userController.home = function(req, res) {
   if (req.user){
     mes1=`Hello, user ${req.user.username}. Your session ID is ${req.sessionID} and your session expires in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} minutes.`;
   }
-  Post.find()
+  // Find posts there field "title" exists at all
+  Post.find({title: { $exists: true}} )
+  //.aggregate({ $filter :{title: { $exists: true}}})
   .populate('author')
+  .sort([['updatedAt', 'descending']])
   .exec(function (err, posts) {
     if (err) { return next(err); }
     return res.render('index', {  title : "Authentication example", user : req.user , mes: mes1, posts:posts});
@@ -221,18 +224,178 @@ userController.createPost = [
   check('content1').trim().isLength({ min: 2 }).withMessage('Content Must Be at Least 2 Characters').escape(),
   function(req, res, next) {
     const errors = validationResult(req);
-    console.log(errors);
-    console.log(errors.isEmpty());
-    console.log(req.user);
+    //console.log(errors);
+    //console.log(errors.isEmpty());
+    //console.log(req.user);
   if (!errors.isEmpty()) { 
       return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
       user : req.user, postTitle:req.body.title, postContent: req.body.content1, errors: errors.array()});
   }else{
     let post = new Post(  { title: req.body.title, content: req.body.content1, author:req.user._id}    );
-    console.log(post);
+    //console.log(post);
     post.save(function (err) {
       if (err) { return next(err); }
       res.redirect('/');
+    });
+    //return res.redirect('/');
+  //return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
+   // user : req.user, postTitle:req.body.title, postContent: req.body.content1});
+}}
+]
+
+userController.postPage = function(req, res) {
+  Post.findById(req.params.id)
+  .populate('author')
+  .exec(function (err, post) {
+   //console.log(post);
+   //console.log(err);
+    if (err || !post) { 
+     return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
+    }
+    else{
+      //post={...,comment:"1" };
+      //post.commen= "1";
+      console.log("Post:");
+      console.log(post);
+      //post.comment = "1";
+      //let post1 = new Object(post);
+      //post1['comment'] = "1";
+      //console.log("Post after:");
+      //console.log(post1);
+      post.comments =[];
+      console.log("Comments1:");
+      console.log(post.comments);
+      async function comsTo(id){
+        try {
+          //let com =[];
+        let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
+        for (let i=0; i<coms.length; i++ ){
+          console.log(coms[i]._id);
+          coms[i].comments= await comsTo(coms[i]._id);
+        }
+          return coms;
+      }
+      catch(err) {
+        console.log(err);
+      }
+      }
+      //comsTo(req.params.id);
+      async function comsPr(){
+        try {
+          //let com =[];
+          post.comments = await comsTo(req.params.id);
+        console.log("Comments2:");
+        console.log(post.comments);
+        //console.log("Post2:");
+        //console.log(post);
+        return res.render('showPost', {  title : "A post", user : req.user , post:post});
+      }
+      catch(err) {
+        console.log(err);
+      }
+      }
+      comsPr();
+/*
+      Post.find({'commentTo':req.params.id})
+      .populate('author')
+      .exec(function (err, posts) {
+        if(err){console.log("err");}
+        if(posts.length==0){console.log("0");}
+        console.log("Comments:");
+        console.log(posts);
+        //posts;
+      })  
+      */
+      //post.comments = comsTo(req.params.id);
+      //let a=comsTo(req.params.id);
+      console.log("Params:");
+      console.log(req.params.id);
+      //console.log("Comments:");
+      //console.log(a);
+      //console.log("Post:");  for (var pr in post){  if (post.hasOwnProperty(pr)){      console.log(pr + "  " +post[pr]);   }   }
+      //return res.render('showPost', {  title : "A post", user : req.user , post:post});
+    }
+  });
+};
+
+userController.userPage = function(req, res) {
+  //console.log(req.user._id);
+  Post.find({ 'author': req.user._id , 'title': { $exists: true} })
+  .populate('author')
+  .sort([['updatedAt', 'descending']])
+   .exec(function (err, posts) {
+    //console.log(post);
+    console.log(err);
+    if (err || !posts){  
+      return res.render('user', {  title : "All your posts", user : req.user , err: "nothing is found"});
+    }else{
+      if ( posts.length==0) {  
+        return res.render('user', {  title : "All your posts", user : req.user , err: "nothing is found"});
+      }else{
+        return res.render('user', {  title : "All your posts", user : req.user , author: posts[0].author, posts:posts});
+      }
+    }
+   });
+ };
+
+userController.authorPage = function(req, res) {
+   Post.find({ 'author': req.params.id, 'title': { $exists: true} })
+   .populate('author')
+   .sort([['updatedAt', 'descending']])
+   .exec(function (err, posts) {
+    //console.log(posts);
+    //console.log(err);
+    //console.log(posts.length);
+    if (err || !posts){  
+      return res.render('user', {  title : "All posts of a user", user : req.user , err: "nothing is found"});
+    }else{
+      if ( posts.length==0) {  
+        return res.render('user', {  title : "All posts of a user", user : req.user , err: "nothing is found"});
+      }else{
+        return res.render('user', {  title : "All posts of a user "+posts[0].author.name, user : req.user , author: posts[0].author, posts:posts});
+      }
+    }
+    /*
+    if (err || posts.length==0) { 
+      let tx="nothing is found";
+      return res.render('user', {  title : "All posts of a user", user : req.user , err: tx});
+    }
+     */
+   });
+};
+
+userController.createComment = [ 
+  check('content1').trim().isLength({ min: 2 }).withMessage('Content Must Be at Least 2 Characters').escape(),
+  function(req, res, next) {
+    const errors = validationResult(req);
+    console.log("Errors: ");
+    console.log(errors);
+    console.log("User:");
+    console.log(req.user);
+    console.log("Body:");
+    console.log(req.body);
+  if (!errors.isEmpty()) { 
+    Post.findById(req.body.topost)
+    .populate('author')
+    .exec(function (err, post) {
+     //console.log(post);
+     //console.log(err);
+      if (err || !post) { 
+        return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
+      }
+      return res.render('showPost', {  title : "A post", user : req.user , post:post, name : req.user.name,  
+      postContent: req.body.content1, errors: errors.array()});
+    });
+      //return res.render('showPost', { title : "A post" , name : req.user.name, 
+     // user : req.user,  postContent: req.body.content1, errors: errors.array()});
+  }else{
+    let com = new Post(  { content: req.body.content1, author:req.user._id, commentTo:req.body.commentto1}    );
+    console.log("Added comment");
+    console.log(com);
+    com.save(function (err) {
+      if (err) { return next(err); }
+      return res.redirect(`/posts/${req.body.topost}`);
+      //return res.render('showPost', { title : "A post" , name : req.user.name, user : req.user, });
     });
     //return res.redirect('/');
   //return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 

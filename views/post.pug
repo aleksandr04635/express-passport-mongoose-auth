@@ -1,0 +1,21 @@
+div.post
+      div
+          a(href=post.url)   
+           h3=post.title  
+          p.author created by author:   
+            a(href=post.author.url) #{ post.author.name  }
+            | #{" at    " + post.updatedAtFormatted}
+      //-
+        div
+          a(href=post.url)   
+           h3=post.title  
+          | created by author:   
+          a(href=post.author.url) #{ post.author.name  }
+          | #{" at    " + post.updatedAtFormatted}
+        //- | #{" by author : "+ post.author.name }
+        //- | #{" with: "+ post.url }
+      p #{" content: " +post.content }
+        //-p #{post.content }
+
+
+

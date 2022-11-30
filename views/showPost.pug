@@ -1,0 +1,64 @@
+extends layout
+
+mixin t(c)
+ if c>0
+  p #{c} 
+  +t(c-1)
+ else 
+  p none
+ 
+mixin comments(post1)
+    //-p Comments:
+    each com in post1.comments
+     div.comment
+        //-
+         p created by author:   
+          |
+          a(href=com.author.url) #{com.author.name }
+          | #{" at    " + com.updatedAtFormatted}     
+        p.author created by author:   
+          |
+          a(href=com.author.url) #{com.author.name }
+          | #{" at    " + com.updatedAtFormatted}
+        p #{"content of a comment: " +com.content }
+        button(class="comformtoggle") Comment this
+        //-p test
+        form(role='form', action='/createcomment', method='post', class="comform")
+          textarea(type='textarea', name='content1',  id='contentt', placeholder='content' , required='true' ) #{undefined===postContent ? '' : postContent}
+          br
+          button(type='submit') Create a comment
+          input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=com._id)
+          input(type='text', style="visibility :hidden", name='topost', id='topost' , value=post._id)
+        if errors
+          ul.err
+           for error in errors
+              li!=  error.msg + '. You entered ' + error.param + " = " +error.value 
+        +comments(com)
+    else 
+     //-p No comments
+
+block content
+  if err
+    p.err=err
+  if post
+    h3 A post:
+    include post.pug
+    p Try adding comments to comments to see the result.
+    p It's made by recursions both in database call and template rendering.
+    p I made it up muself without any example.
+    P Yes, it can look better.
+    -var st=post._id
+    h3 Make a comment:
+    form(role='form', action='/createcomment', method='post')
+      textarea(type='textarea', name='content1',  id='contentt', placeholder='content' , required='true' ) #{undefined===postContent ? '' : postContent}
+      br
+      button(type='submit') Create a comment
+      input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=st)
+      input(type='text', style="visibility :hidden", name='topost', id='topost' , value=post._id)
+    if errors
+      ul.err
+        for error in errors
+          li!=  error.msg + '. You entered ' + error.param + " = " +error.value 
+    +comments(post)
+    //-+t(3)
+    //-button(onclick="alert('a')") click

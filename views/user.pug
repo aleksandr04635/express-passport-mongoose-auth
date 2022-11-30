@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  if posts
+    h3=title
+    //-h3 All posts of a user #{ author.name  }:
+    //-ul
+    for post in posts
+      include post.pug
+
+  if err
+      p.err=err
+
+

@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-//var passportLocalMongoose = require('passport-local-mongoose');
+const { DateTime } = require("luxon");
 
 var PostSchema = new Schema({
   author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-  title: {type: String, required: true},
+  commentTo: {type: Schema.Types.ObjectId, ref: 'Post'},
+  title: {type: String},
   content: {type: String, required: true},
   },
     { timestamps: true }
@@ -17,17 +18,24 @@ var PostSchema = new Schema({
     }
     */
 );
-// Passport-local-mongoose automatically salts and hashes passwords.
-//UserSchema.plugin(passportLocalMongoose);
 
-// Virtual for genres URL
 PostSchema
 .virtual('url')
 .get(function () {
   return '/posts/' + this._id;
 });
 
+PostSchema
+.virtual('updatedAtFormatted')
+.get(function () {
+  return this.updatedAt ? DateTime.fromJSDate(this.updatedAt ).setLocale('en-gb').toLocaleString(DateTime.DATETIME_MED) : '';
+});
+
 module.exports = mongoose.model('Post', PostSchema);
+
+
+
+
 
 
 

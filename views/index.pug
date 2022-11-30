@@ -1,25 +1,18 @@
 extends layout
 
 block content
-  h3 A tutorial example of a blog with user authentication build with Node.js/Express, Mongoose and Passport with passport-local-mongoose
+  h3  A blog with user authentication build with Node.js/Express with Pug templete engine,  
+      | Mongoose and Passport with passport-local-mongoose strategy.
   //-br
-  p You can change your browser window width to see adaptiveness of design
   if mes
-   p #{mes}
+   p.imp #{mes}
+  p You can change your browser window width to 
+    |see adaptiveness of design, register, make posts and view and comment them by clicking on respective links.
   h3 All posts:
   if posts
     //-ul
     for post in posts
       //-li
-      div
-        div
-          a(href=post.url)   
-           h3=post.title  
-          | by author :
-          a(href=post.author.url) #{ post.author.name  }
-        //- | #{" by author : "+ post.author.name }
-        //- | #{" with: "+ post.url }
-        p #{" content: " +post.content }
-        //-p #{post.content }
+      include post.pug
 
 

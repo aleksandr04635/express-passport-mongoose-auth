@@ -14,9 +14,18 @@ router.get('/login', auth.login);
 router.post('/login', auth.doLogin);
 // route for logout action
 router.get('/logout', auth.logout);
-// route for create page
+// route for create a post page
 router.get('/createpage', auth.restrictor, auth.createPage);
-// route for create action
+// route for create a post action
 router.post('/createpage', auth.restrictor, auth.createPost);
+// route for a post page
+router.get('/posts/:id', auth.postPage);
+// route for a user page
+router.get('/userpage', auth.userPage);
+// route for an author page
+router.get('/users/:id', auth.authorPage);
+// route for create a comment action
+router.post('/createcomment', auth.restrictor, auth.createComment);
+
 
 module.exports = router;

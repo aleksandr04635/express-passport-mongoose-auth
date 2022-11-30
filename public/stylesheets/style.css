@@ -9,7 +9,7 @@ html, body {
 }
 #contentt{
   width: 300px;
-  height: 150px;
+  height: 50px;
 }
 .con1 {
   display: flex;
@@ -19,17 +19,46 @@ html, body {
 }
 .container {
   max-width: 900px;
-  background-color: rgb(249, 249, 249);
+  background-color: rgb(251, 251, 251);
   min-height:100vh;/*all wievport */
     /*height: 100%;*/
     padding: 0px 10px;
 }
-.content {
-
+/*.content {}*/
+.post {
+  border: 1px solid black;
+  margin :2px;
+  padding: 4px;
+  padding-left: 6px;
+  margin-left: 5px;
+  background-color: rgba(179, 179, 179, 0.1);
 }
-.content>div{
+.comment {
+  border: 1px solid black;
+  margin :0px;
+  padding: 0px;
+  padding-left: 11px;
+  padding-right: 0px;
+  margin-left: 0px;
+  background-color: rgba(179, 179, 179, 0.1);
+  border-collapse: separate;
+}
+.author {
+  color: rgb(93, 67, 8);
+}
+.author-user {
+  color: rgb(255, 174, 0);
+}
+/*
+.comform{
+  visibility: hidden;
+}
+*/
+/*
+.content>div:not(.comment){
   padding: 0px 10px;
 }
+*/
 .navbar-header{
   max-width: 900px;
   background-color: rgb(232, 232, 232);
@@ -55,7 +84,8 @@ html, body {
   font-size: 17px;
  /* background-color: rgba(239, 248, 250, 0.956);*/
 }
-.navbar-header a:not(#great):hover {
+/*.navbar-header a:not(#great):hover {*/
+.navbar-header a:hover {
   background-color: rgb(210, 210, 210);
 }
 .p1{
@@ -63,6 +93,12 @@ html, body {
 }
 .p2{
   border-left: 1px solid black;
+}
+.imp{
+  color: #700b0b;
+}
+.err{
+  color: #cf2929;
 }
 .navbar-header #great{
   font-weight: 700;
@@ -90,11 +126,6 @@ html, body {
   .p1, .p2{
     border: 0px solid rgb(211, 33, 33);
   }
-}
-
-
-.err{
-  color: #cf2929;
 }
 
 /* .form {
