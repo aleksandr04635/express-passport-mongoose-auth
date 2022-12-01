@@ -2,13 +2,15 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const { DateTime } = require("luxon");
 
+//Both posts and comments are in the same collection to not have difference ...
+//...in commnetTo field of comments that points to a post of a comment a given comment is writen to
 var PostSchema = new Schema({
-  author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-  commentTo: {type: Schema.Types.ObjectId, ref: 'Post'},
-  title: {type: String},
-  content: {type: String, required: true},
+    author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+    commentTo: {type: Schema.Types.ObjectId, ref: 'Post'},
+    title: {type: String},
+    content: {type: String, required: true},
   },
-    { timestamps: true }
+  { timestamps: true }
  //   timestamps – this is used to tell Mongoose to add 
  //   createdAt and updatedAt properties to a schema. 
  //The values will be auto-populated by Mongoose.
@@ -32,10 +34,6 @@ PostSchema
 });
 
 module.exports = mongoose.model('Post', PostSchema);
-
-
-
-
 
 
 

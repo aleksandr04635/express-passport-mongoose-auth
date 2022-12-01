@@ -8,7 +8,7 @@ var Post = require("../models/PostModel.js");
 
 var userController = {};
 
-// Restrict access to root page
+// renders a homepage with all posts
 userController.home = function(req, res) {
  //     if (req.session.userid){console.log(req.session.userid);}
    //   console.log(req.session);
@@ -17,7 +17,9 @@ userController.home = function(req, res) {
   let mes1="";
   if (!req.user){mes1="User unauthenticated";}
   if (req.user){
-    mes1=`Hello, user ${req.user.username}. Your session ID is ${req.sessionID} and your session expires in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} minutes.`;
+    mes1=`Hello, user ${req.user.username}. Your session will end in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} 
+       minutes even if you close and open the browser`;
+  // mes1=`Hello, user ${req.user.username}. Your session ID is ${req.sessionID} and your session expires in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} minutes.`;
   }
   // Find posts there field "title" exists at all
   Post.find({title: { $exists: true}} )
@@ -37,7 +39,8 @@ userController.register = function(req, res) {
   return res.render('register', { title : "Registration page" });
 };
 
-// Post registration
+// Post route registration
+//username will be email - unique
 userController.doRegister = [ 
 check('name').trim().isLength({ min: 2 }).withMessage('Name Must Be at Least 2 Characters').escape(),
 check('username').trim().isLength({ min: 2 }).withMessage('Username Must Be at Least 2 Characters').escape(),
@@ -47,28 +50,34 @@ function(req, res, next) {
   console.log("error 1= " );
   console.log(errors);
   if (!errors.isEmpty()) { 
-    return res.render('register', {title: "Registration page", name: req.body.name, username : req.body.username, password: req.body.password, errors: errors.array()});
+    return res.render('register', {title: "Registration page", name: req.body.name, username : req.body.username,
+       password: req.body.password, errors: errors.array()});
   }else{
+  // registers a user...  
   User.register(new User({username : req.body.username, name: req.body.name }), req.body.password, function(err, user) {
     if (err) {
       console.log("error 2= " +err);
       console.log(req.body.password);
       if(err=="UserExistsError: A user with the given username is already registered"){
-        return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, password: req.body.password, user : user , err: "A user with the given username is already registered"})
+        return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, 
+          password: req.body.password, user : user , err: "A user with the given username is already registered"})
       }else{
-        return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, password: req.body.password, user : user , err: err});
+        return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, 
+          password: req.body.password, user : user , err: err});
       }
     }else{
 //    I used passport.authenticate to generate a middleware function and then passed req, res and next to it  
+      //... then authenticates them...
       passport.authenticate('local', {}, function (err, user, info) {
        if (err) {
-         return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, password: req.body.password, user : user , err: err});
+         return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, 
+          password: req.body.password, user : user , err: err});
       } else {
-//      console.log(`info ${info}`);
+        //...and starts a session
         req.login(user, function (err) {
           console.log(`registered ${user.name}`);
-//        console.log(req.body.username+" " + req.body.password);
-//        retirection to were user wanted to  go
+          //console.log(req.body.username+" " + req.body.password);
+          //retirection to were user wanted to  go
           let redirectTo = req.session.redirectTo || '/';
           delete req.session.redirectTo;
           return res.redirect(redirectTo);
@@ -94,7 +103,8 @@ passport.authenticate('local', {
     failureRedirect: "/login",
 })(req, res, next)
 */
-// Go to login page
+
+// renders a login page
 userController.login = function(req, res, next) {
   let mes ="";
   if(req.session.message){
@@ -102,7 +112,6 @@ userController.login = function(req, res, next) {
     delete req.session.message;
   }
   //console.log(req.session.message);
-  
   res.render('login', { title : "Login page", err: mes});
 }
 
@@ -131,7 +140,7 @@ function(req, res, next){
     }else{
       req.login(user, function (err) {
               if (err) {
-//              console.log("went here 1" );
+                //console.log("went here 1" );
                 return res.render('login' , {title: "Login page", username: req.body.username, password: req.body.password, err: err}); 
               } else {
                 console.log(`logined ${user.name}`);
@@ -191,6 +200,7 @@ userController.logout = function(req, res) {
 restricting access function
 https://stackoverflow.com/questions/13335881/redirecting-to-previous-page-after-authentication-in-node-js-using-passport-js
 */
+//restrict access
 userController.restrictor = function(req, res, next){
     if (!req.isAuthenticated()) {
         req.session.redirectTo = req.originalUrl; 
@@ -215,10 +225,12 @@ userController.restrict = function(req, res, next) {
 }
 */
 
+//renders create a post page
 userController.createPage = function(req, res) {
   return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, user : req.user});
 }
 
+//handling of a post request to create a post
 userController.createPost = [ 
   check('title').trim().isLength({ min: 2 }).withMessage('Title Must Be at Least 2 Characters').escape(),
   check('content1').trim().isLength({ min: 2 }).withMessage('Content Must Be at Least 2 Characters').escape(),
@@ -231,11 +243,15 @@ userController.createPost = [
       return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
       user : req.user, postTitle:req.body.title, postContent: req.body.content1, errors: errors.array()});
   }else{
+    //creates a post
     let post = new Post(  { title: req.body.title, content: req.body.content1, author:req.user._id}    );
     //console.log(post);
-    post.save(function (err) {
+    post.save(function (err, post) {
+      console.log(post);
       if (err) { return next(err); }
-      res.redirect('/');
+      //res.redirect('/');
+      //and redirects to its page
+      return res.redirect(`/posts/${post._id}`);
     });
     //return res.redirect('/');
   //return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
@@ -243,81 +259,7 @@ userController.createPost = [
 }}
 ]
 
-userController.postPage = function(req, res) {
-  Post.findById(req.params.id)
-  .populate('author')
-  .exec(function (err, post) {
-   //console.log(post);
-   //console.log(err);
-    if (err || !post) { 
-     return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
-    }
-    else{
-      //post={...,comment:"1" };
-      //post.commen= "1";
-      console.log("Post:");
-      console.log(post);
-      //post.comment = "1";
-      //let post1 = new Object(post);
-      //post1['comment'] = "1";
-      //console.log("Post after:");
-      //console.log(post1);
-      post.comments =[];
-      console.log("Comments1:");
-      console.log(post.comments);
-      async function comsTo(id){
-        try {
-          //let com =[];
-        let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
-        for (let i=0; i<coms.length; i++ ){
-          console.log(coms[i]._id);
-          coms[i].comments= await comsTo(coms[i]._id);
-        }
-          return coms;
-      }
-      catch(err) {
-        console.log(err);
-      }
-      }
-      //comsTo(req.params.id);
-      async function comsPr(){
-        try {
-          //let com =[];
-          post.comments = await comsTo(req.params.id);
-        console.log("Comments2:");
-        console.log(post.comments);
-        //console.log("Post2:");
-        //console.log(post);
-        return res.render('showPost', {  title : "A post", user : req.user , post:post});
-      }
-      catch(err) {
-        console.log(err);
-      }
-      }
-      comsPr();
-/*
-      Post.find({'commentTo':req.params.id})
-      .populate('author')
-      .exec(function (err, posts) {
-        if(err){console.log("err");}
-        if(posts.length==0){console.log("0");}
-        console.log("Comments:");
-        console.log(posts);
-        //posts;
-      })  
-      */
-      //post.comments = comsTo(req.params.id);
-      //let a=comsTo(req.params.id);
-      console.log("Params:");
-      console.log(req.params.id);
-      //console.log("Comments:");
-      //console.log(a);
-      //console.log("Post:");  for (var pr in post){  if (post.hasOwnProperty(pr)){      console.log(pr + "  " +post[pr]);   }   }
-      //return res.render('showPost', {  title : "A post", user : req.user , post:post});
-    }
-  });
-};
-
+//shows all post of a current user
 userController.userPage = function(req, res) {
   //console.log(req.user._id);
   Post.find({ 'author': req.user._id , 'title': { $exists: true} })
@@ -338,6 +280,7 @@ userController.userPage = function(req, res) {
    });
  };
 
+//shows all posts of an author
 userController.authorPage = function(req, res) {
    Post.find({ 'author': req.params.id, 'title': { $exists: true} })
    .populate('author')
@@ -352,7 +295,8 @@ userController.authorPage = function(req, res) {
       if ( posts.length==0) {  
         return res.render('user', {  title : "All posts of a user", user : req.user , err: "nothing is found"});
       }else{
-        return res.render('user', {  title : "All posts of a user "+posts[0].author.name, user : req.user , author: posts[0].author, posts:posts});
+        return res.render('user', {  title : "All posts of a user "+posts[0].author.name, user : req.user , 
+          author: posts[0].author, posts:posts});
       }
     }
     /*
@@ -364,9 +308,69 @@ userController.authorPage = function(req, res) {
    });
 };
 
+//by get querry shows a post and allows to comment it
+userController.postPage = function(req, res) {
+  Post.findById(req.params.id)
+  .populate('author')
+  .exec(function (err, post) {
+   //console.log(post);
+   //console.log(err);
+    if (err || !post) { 
+     return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
+    }
+    else{
+      console.log("Post:");
+      console.log(post);
+      //console.log("Post after:");
+      //console.log(post1);
+      console.log("Params:");
+      console.log(req.params.id);
+      post.comments =[];
+      console.log("Comments1:");
+      console.log(post.comments);
+      // a function to find comments to a post or a comment
+      async function comsTo(id){
+        try {
+          //find an array of comments to a given id of a post or a comment
+          let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
+          for (let i=0; i<coms.length; i++ ){
+            console.log(coms[i]._id);
+            //recursively call a function to find comments to a comment 
+            coms[i].comments= await comsTo(coms[i]._id);
+          }
+          return coms;
+        }
+        catch(err) {
+          console.log(err);
+        }
+      }
+      //a function to find all comments to the post in DB and render them
+      async function comsPr(){
+        try {
+           //call a function to find comments to the post
+           post.comments = await comsTo(req.params.id);
+           //console.log("Comments2:");
+           //console.log(post.comments);
+           //console.log("Post2:");
+           //console.log(post);
+           return res.render('showPost', {  title : "A post", user : req.user , post:post});
+        }
+        catch(err) {
+          console.log(err);
+        }
+      }
+      //call the function to find all comments in DB and render them
+      comsPr();
+      //console.log("Post:");  for (var pr in post){  if (post.hasOwnProperty(pr)){      console.log(pr + "  " +post[pr]);   }   }
+      //return res.render('showPost', {  title : "A post", user : req.user , post:post});
+    }
+  });
+};
+
+//post route to create a comment
 userController.createComment = [ 
-  check('content1').trim().isLength({ min: 2 }).withMessage('Content Must Be at Least 2 Characters').escape(),
-  function(req, res, next) {
+check('content1').trim().isLength({ min: 3 }).withMessage('Content Must Be at Least 3 Characters').escape(),
+function(req, res, next) {
     const errors = validationResult(req);
     console.log("Errors: ");
     console.log(errors);
@@ -374,7 +378,59 @@ userController.createComment = [
     console.log(req.user);
     console.log("Body:");
     console.log(req.body);
+  //req.body.topost passes to what post a comment must be made or cooment to comment to the post  
   if (!errors.isEmpty()) { 
+    Post.findById(req.body.topost)
+    .populate('author')
+    .exec(function (err, post) {
+     //console.log(post);
+     //console.log(err);
+      if (err || !post) { 
+       return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
+      }
+      else{
+        console.log("Post:");
+        console.log(post);
+        //console.log("Post after:");
+        //console.log(post1);
+        console.log("Params:");
+        console.log(req.params.id);
+        post.comments =[];
+        console.log("Comments1:");
+        console.log(post.comments);
+        // a function to find comments to a post or a comment
+        async function comsTo(id){
+          try {
+            //find an array of comments to a given id of a post or a comment
+            let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
+            for (let i=0; i<coms.length; i++ ){
+              console.log(coms[i]._id);
+              //recursively call a function to find comments to a comment 
+              coms[i].comments= await comsTo(coms[i]._id);
+            }
+            return coms;
+          }
+          catch(err) {
+            console.log(err);
+          }
+        }
+        //a function to find all comments to the post in DB and render them
+        async function comsPr(){
+          try {
+             //call a function to find comments to the post
+             post.comments = await comsTo(req.params.id);
+             return res.render('showPost', {  title : "A post", user : req.user , post:post,
+              name : req.user.name, postContent: req.body.content1, commentedTo: req.body.commentto1, errors: errors.array()});
+          }
+          catch(err) {
+            console.log(err);
+          }
+        }
+        //call the function to find all comments in DB and render them
+        comsPr();
+      }
+    });
+/*
     Post.findById(req.body.topost)
     .populate('author')
     .exec(function (err, post) {
@@ -384,11 +440,11 @@ userController.createComment = [
         return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
       }
       return res.render('showPost', {  title : "A post", user : req.user , post:post, name : req.user.name,  
-      postContent: req.body.content1, errors: errors.array()});
+        postContent: req.body.content1, errors: errors.array()});
     });
-      //return res.render('showPost', { title : "A post" , name : req.user.name, 
-     // user : req.user,  postContent: req.body.content1, errors: errors.array()});
+*/
   }else{
+    //create a comment if there are no errors
     let com = new Post(  { content: req.body.content1, author:req.user._id, commentTo:req.body.commentto1}    );
     console.log("Added comment");
     console.log(com);
@@ -397,7 +453,6 @@ userController.createComment = [
       return res.redirect(`/posts/${req.body.topost}`);
       //return res.render('showPost', { title : "A post" , name : req.user.name, user : req.user, });
     });
-    //return res.redirect('/');
   //return res.render('create', { title : "Create a post - restricted access page" , name : req.user.name, 
    // user : req.user, postTitle:req.body.title, postContent: req.body.content1});
 }}

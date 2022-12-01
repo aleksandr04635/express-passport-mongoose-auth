@@ -23,6 +23,8 @@ comForm.forEach((form)=> {
         //form.style.backgroundColor="blue";
         //form.style.visibility="hidden";
         form.style.display="none";
+        //form.nextSibling.style.display="none";
+        //console.log(form.id);
 })
 const comFormToggle = document.querySelectorAll('.comformtoggle');
 comFormToggle.forEach((button)=> {
@@ -53,3 +55,17 @@ authorsLines.forEach((par)=> {
  }   
 })
 
+//shows form for editing and error warning only for necessary comment -
+// passed from server in id='commented-to-el' element
+
+const commentedTo=document.getElementById('commented-to-el').textContent.slice(0,24).toString();
+if (commentedTo){
+  document.getElementById('commented-to-el').style.display="none";
+console.log(":"+commentedTo+":");
+//document.getElementById(CSS.escape(commentedTo)).style.display="block";
+document.getElementById(commentedTo).style.display="block";
+//document.getElementById(commentedTo).nextSibling.style.display="block";
+}
+//document.querySelector(`a[href=${CSS.escape(t)}]`)
+//let t = window.location.pathname;
+//console.log(t);

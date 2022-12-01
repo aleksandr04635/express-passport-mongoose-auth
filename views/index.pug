@@ -2,12 +2,21 @@ extends layout
 
 block content
   h3  A blog with user authentication build with Node.js/Express with Pug templete engine,  
-      | Mongoose and Passport with passport-local-mongoose strategy.
+      | Mongoose and Passport with passport-local-mongoose strategy of session authentification.
   //-br
   if mes
    p.imp #{mes}
   p You can change your browser window width to 
     |see adaptiveness of design, register, make posts and view and comment them by clicking on respective links.
+  p Try to create a post without being logged in.
+  p You can also click on author links to see all their posts.
+  p Posts and comments, made by you, are highlighted by color.
+  p How much of what you see I have made myself? I have started from 
+   a(href="https://www.djamware.com/post/58bd823080aca7585c808ebf/nodejs-expressjs-mongoosejs-and-passportjs-authentication") this tutorial, 
+   | that makes only authenthification and have made everything else myself basing on miscellanious sources, switching from Bootstrap to plain CSS.
+  p I have made possible commenting comments by recursions both in database call and Pug template rendering, I have made up myself. 
+  p You can see my code  
+   a(href="https://github.com/aleksandr04635/express-passport-mongoose-auth") here.
   h3 All posts:
   if posts
     //-ul

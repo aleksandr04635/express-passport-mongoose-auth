@@ -21,8 +21,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 mongoose.Promise = global.Promise;
-let mstr1= 'mongodb://localhost/node-auth2';
-//var dev_db_url = 'mongodb+srv://aleksandr04635:df368ie90@cluster0.vkcz0.mongodb.net/local_library?retryWrites=true&w=majority';
+let mstr1= 'mongodb://localhost/node-auth';
+//var mstrPr = 'mongodb+srv://aleksandr04635:df368ie90@cluster0.vkcz0.mongodb.net/express_pug_blog?retryWrites=true&w=majority';
 let mstr = process.env.MONGODB_URI || mstr1;
 mongoose.connect(mstr, {
   useNewUrlParser: true,
@@ -63,7 +63,7 @@ app.use(session({
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: mstr }),
     cookie: { 
-      maxAge:  10*60*60 * 1000 ,
+      maxAge:  24*60*60 * 1000 
       //expires: 60000  // Session expires after 1 min of inactivity. // req.session.cookie.expires - time of exp
     }
   //  cookie: { maxAge: 60 * 60 * 1000, secure: true }//secure - only via https

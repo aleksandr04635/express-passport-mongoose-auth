@@ -7,9 +7,10 @@ mixin t(c)
  else 
   p none
  
+//-renders all comments to a post or comment 
 mixin comments(post1)
-    //-p Comments:
     each com in post1.comments
+     //-renders a comment and calls entire mixin to render all comments to this
      div.comment
         //-
          p created by author:   
@@ -23,16 +24,18 @@ mixin comments(post1)
         p #{"content of a comment: " +com.content }
         button(class="comformtoggle") Comment this
         //-p test
-        form(role='form', action='/createcomment', method='post', class="comform")
-          textarea(type='textarea', name='content1',  id='contentt', placeholder='content' , required='true' ) #{undefined===postContent ? '' : postContent}
+        //-form(role='form', action='/createcomment', method='post', class="comform")
+        form(role='form', action='', method='post', class="comform", id= com._id)
+          textarea(type='textarea', name='content1', class= "contentt", id='contentt1', placeholder='content' , required='true' ) #{(com._id==commentedTo)?(undefined===postContent ? '' : postContent):""}
           br
           button(type='submit') Create a comment
           input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=com._id)
           input(type='text', style="visibility :hidden", name='topost', id='topost' , value=post._id)
-        if errors
-          ul.err
-           for error in errors
+          if errors
+           ul.err
+            for error in errors
               li!=  error.msg + '. You entered ' + error.param + " = " +error.value 
+        //-renders comments to a comment recursively
         +comments(com)
     else 
      //-p No comments
@@ -43,22 +46,27 @@ block content
   if post
     h3 A post:
     include post.pug
+    p Try adding comments that are too short (less than 3symbols)
     p Try adding comments to comments to see the result.
     p It's made by recursions both in database call and template rendering.
     p I made it up muself without any example.
     P Yes, it can look better.
-    -var st=post._id
-    h3 Make a comment:
-    form(role='form', action='/createcomment', method='post')
-      textarea(type='textarea', name='content1',  id='contentt', placeholder='content' , required='true' ) #{undefined===postContent ? '' : postContent}
+    //-var st=post._id
+    //-h3 Make a comment:
+    button(class="comformtoggle") Comment this
+    //-form(role='form', action='/createcomment', method='post')
+    form(role='form', action='', method='post', class="comform",  id=post._id)
+      textarea(type='textarea', name='content1',  class= "contentt", placeholder='content' , required='true' ) #{(post._id==commentedTo)?(undefined===postContent ? '' : postContent):""}
       br
       button(type='submit') Create a comment
-      input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=st)
+      input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=post._id)
       input(type='text', style="visibility :hidden", name='topost', id='topost' , value=post._id)
-    if errors
-      ul.err
+      if errors
+       ul.err
         for error in errors
           li!=  error.msg + '. You entered ' + error.param + " = " +error.value 
+    if commentedTo      
+     p#commented-to-el #{commentedTo}    
     +comments(post)
     //-+t(3)
     //-button(onclick="alert('a')") click

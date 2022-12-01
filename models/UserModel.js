@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
 var UserSchema = new Schema({
-    username: {type: String, required: true},
+    username: {type: String, required: true, unique: true},//it will be email
    // password: {type: String, required: true},
     password: String,
     name: {type: String, required: true},
@@ -18,7 +18,7 @@ var UserSchema = new Schema({
     */
 );
 
-// Virtual for genres URL
+// Virtual for users URL
 UserSchema
 .virtual('url')
 .get(function () {

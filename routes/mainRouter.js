@@ -24,8 +24,8 @@ router.get('/posts/:id', auth.postPage);
 router.get('/userpage', auth.userPage);
 // route for an author page
 router.get('/users/:id', auth.authorPage);
-// route for create a comment action
-router.post('/createcomment', auth.restrictor, auth.createComment);
-
+//post route for create a comment action
+//router.post('/createcomment', auth.restrictor, auth.createComment);
+router.post('/posts/:id', auth.restrictor, auth.createComment);
 
 module.exports = router;
