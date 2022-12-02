@@ -21,7 +21,7 @@ mixin comments(post1)
           |
           a(href=com.author.url) #{com.author.name }
           | #{" at    " + com.updatedAtFormatted}
-        p #{"content of a comment: " +com.content }
+        p.post-content !{"content of a comment: " +com.content }
         button(class="comformtoggle") Comment this
         //-p test
         //-form(role='form', action='/createcomment', method='post', class="comform")
@@ -29,8 +29,10 @@ mixin comments(post1)
           textarea(type='textarea', name='content1', class= "contentt", id='contentt1', placeholder='content' , required='true' ) #{(com._id==commentedTo)?(undefined===postContent ? '' : postContent):""}
           br
           button(type='submit') Create a comment
-          input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=com._id)
-          input(type='text', style="visibility :hidden", name='topost', id='topost' , value=post._id)
+          input(type='text', style="visibility :hidden", name='commentto1' , value=com._id)
+          input(type='text', style="visibility :hidden", name='topost' , value=post._id)
+        //-if there were errors in commenting shows an error only to a necessary comment  
+        -if(com._id==commentedTo) 
           if errors
            ul.err
             for error in errors
@@ -48,7 +50,7 @@ block content
     include post.pug
     p Try adding comments that are too short (less than 3symbols)
     p Try adding comments to comments to see the result.
-    p It's made by recursions both in database call and template rendering.
+    p It's made by recursions both in database call(asynchronous) and template rendering.
     p I made it up muself without any example.
     P Yes, it can look better.
     //-var st=post._id
@@ -61,6 +63,8 @@ block content
       button(type='submit') Create a comment
       input(type='text', style="visibility :hidden", name='commentto1', id='commentto' , value=post._id)
       input(type='text', style="visibility :hidden", name='topost', id='topost' , value=post._id)
+    //-if there were errors in commenting shows an error only to a necessary comment  or post
+    -if(post._id==commentedTo)      
       if errors
        ul.err
         for error in errors

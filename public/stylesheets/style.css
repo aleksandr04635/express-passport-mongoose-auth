@@ -9,7 +9,7 @@ html, body {
 }
 .contentt{
   width: 350px;
-  height: 50px;
+  height: 80px;
 }
 .con1 {
   display: flex;
@@ -33,7 +33,16 @@ html, body {
   padding-left: 6px;
   margin-left: 5px;
   background-color: rgba(179, 179, 179, 0.1);
+ 
 }
+/*
+.post-content{
+  max-width:100%;
+}
+*/
+.post-content img{
+  width:100%;
+  }
 .comment {
   border: 1px solid black;
   margin :0px;
@@ -41,7 +50,7 @@ html, body {
   padding-left: 11px;
   padding-right: 0px;
   margin-left: 0px;
-  background-color: rgba(179, 179, 179, 0.1);
+  background-color: rgba(161, 161, 161, 0.1);
   border-collapse: separate;
 }
 .author {

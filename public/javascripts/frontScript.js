@@ -57,7 +57,6 @@ authorsLines.forEach((par)=> {
 
 //shows form for editing and error warning only for necessary comment -
 // passed from server in id='commented-to-el' element
-
 const commentedTo=document.getElementById('commented-to-el').textContent.slice(0,24).toString();
 if (commentedTo){
   document.getElementById('commented-to-el').style.display="none";

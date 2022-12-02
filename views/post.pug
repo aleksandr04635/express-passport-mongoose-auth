@@ -14,7 +14,7 @@ div.post
           | #{" at    " + post.updatedAtFormatted}
         //- | #{" by author : "+ post.author.name }
         //- | #{" with: "+ post.url }
-      p #{" content: " +post.content }
+      p.post-content !{" content: " +post.content }
         //-p #{post.content }
 
 

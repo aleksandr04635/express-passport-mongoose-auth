@@ -8,6 +8,25 @@ var Post = require("../models/PostModel.js");
 
 var userController = {};
 
+//decoding of html content
+//from https://stackoverflow.com/questions/44195322/a-plain-javascript-way-to-decode-html-entities-works-on-both-browsers-and-node
+function decodeEntities(encodedString) {
+  var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+  var translate = {
+      "nbsp":" ",
+      "amp" : "&",
+      "quot": "\"",
+      "lt"  : "<",
+      "gt"  : ">"
+  };
+  return encodedString.replace(translate_re, function(match, entity) {
+      return translate[entity];
+  }).replace(/&#(\d+);/gi, function(match, numStr) {
+      var num = parseInt(numStr, 10);
+      return String.fromCharCode(num);
+  });
+}
+
 // renders a homepage with all posts
 userController.home = function(req, res) {
  //     if (req.session.userid){console.log(req.session.userid);}
@@ -28,6 +47,15 @@ userController.home = function(req, res) {
   .sort([['updatedAt', 'descending']])
   .exec(function (err, posts) {
     if (err) { return next(err); }
+    //const posts1=posts.map((post)=>{return {...post, content: post.content+"A"}});
+    //const posts1=posts.map((post)=>{post.content= post.content+"B";return post;});
+    //const posts1=posts.map((post)=>{post.content= unescape(post.content);return post;});
+    //console.log(posts[0]);
+    //console.log(posts1[0]);
+    //const posts1=posts.map((post)=>{post.content= decodeEntities(post.content);return post;});
+    // return res.render('index', {  title : "Authentication example", user : req.user , mes: mes1, posts:posts1});
+    //DECODE html
+    posts.forEach((post)=>{post.content= decodeEntities(post.content);return post;});
     return res.render('index', {  title : "Authentication example", user : req.user , mes: mes1, posts:posts});
   });
    //let posts=await Post.find({});
@@ -234,6 +262,7 @@ userController.createPage = function(req, res) {
 userController.createPost = [ 
   check('title').trim().isLength({ min: 2 }).withMessage('Title Must Be at Least 2 Characters').escape(),
   check('content1').trim().isLength({ min: 2 }).withMessage('Content Must Be at Least 2 Characters').escape(),
+  //.escape()
   function(req, res, next) {
     const errors = validationResult(req);
     //console.log(errors);
@@ -274,6 +303,8 @@ userController.userPage = function(req, res) {
       if ( posts.length==0) {  
         return res.render('user', {  title : "All your posts", user : req.user , err: "nothing is found"});
       }else{
+        //decode html
+        posts.forEach((post)=>{post.content= decodeEntities(post.content);return post;}); 
         return res.render('user', {  title : "All your posts", user : req.user , author: posts[0].author, posts:posts});
       }
     }
@@ -295,6 +326,8 @@ userController.authorPage = function(req, res) {
       if ( posts.length==0) {  
         return res.render('user', {  title : "All posts of a user", user : req.user , err: "nothing is found"});
       }else{
+        //!decode html
+        posts.forEach((post)=>{post.content= decodeEntities(post.content);return post;});
         return res.render('user', {  title : "All posts of a user "+posts[0].author.name, user : req.user , 
           author: posts[0].author, posts:posts});
       }
@@ -313,21 +346,12 @@ userController.postPage = function(req, res) {
   Post.findById(req.params.id)
   .populate('author')
   .exec(function (err, post) {
-   //console.log(post);
-   //console.log(err);
     if (err || !post) { 
      return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
     }
     else{
-      console.log("Post:");
-      console.log(post);
-      //console.log("Post after:");
-      //console.log(post1);
-      console.log("Params:");
-      console.log(req.params.id);
-      post.comments =[];
-      console.log("Comments1:");
-      console.log(post.comments);
+      //decode html
+      post.content= decodeEntities(post.content);
       // a function to find comments to a post or a comment
       async function comsTo(id){
         try {
@@ -335,6 +359,8 @@ userController.postPage = function(req, res) {
           let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
           for (let i=0; i<coms.length; i++ ){
             console.log(coms[i]._id);
+            //decode html
+            coms[i].content= decodeEntities(coms[i].content);
             //recursively call a function to find comments to a comment 
             coms[i].comments= await comsTo(coms[i]._id);
           }
@@ -349,10 +375,6 @@ userController.postPage = function(req, res) {
         try {
            //call a function to find comments to the post
            post.comments = await comsTo(req.params.id);
-           //console.log("Comments2:");
-           //console.log(post.comments);
-           //console.log("Post2:");
-           //console.log(post);
            return res.render('showPost', {  title : "A post", user : req.user , post:post});
         }
         catch(err) {
@@ -369,35 +391,21 @@ userController.postPage = function(req, res) {
 
 //post route to create a comment
 userController.createComment = [ 
-check('content1').trim().isLength({ min: 3 }).withMessage('Content Must Be at Least 3 Characters').escape(),
+check('content1').trim().isLength({ min: 3 }).withMessage('Content Must Be at Least 3 Characters'),
+//.escape(),
 function(req, res, next) {
     const errors = validationResult(req);
-    console.log("Errors: ");
-    console.log(errors);
-    console.log("User:");
-    console.log(req.user);
-    console.log("Body:");
-    console.log(req.body);
-  //req.body.topost passes to what post a comment must be made or cooment to comment to the post  
+  //req.body.topost passes to what post or coment a comment must be made  
   if (!errors.isEmpty()) { 
     Post.findById(req.body.topost)
     .populate('author')
     .exec(function (err, post) {
-     //console.log(post);
-     //console.log(err);
       if (err || !post) { 
        return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
       }
       else{
-        console.log("Post:");
-        console.log(post);
-        //console.log("Post after:");
-        //console.log(post1);
-        console.log("Params:");
-        console.log(req.params.id);
-        post.comments =[];
-        console.log("Comments1:");
-        console.log(post.comments);
+        //decode html
+        post.content= decodeEntities(post.content);
         // a function to find comments to a post or a comment
         async function comsTo(id){
           try {
@@ -405,6 +413,8 @@ function(req, res, next) {
             let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
             for (let i=0; i<coms.length; i++ ){
               console.log(coms[i]._id);
+              //decode html
+              coms[i].content= decodeEntities(coms[i].content);
               //recursively call a function to find comments to a comment 
               coms[i].comments= await comsTo(coms[i]._id);
             }
@@ -430,19 +440,6 @@ function(req, res, next) {
         comsPr();
       }
     });
-/*
-    Post.findById(req.body.topost)
-    .populate('author')
-    .exec(function (err, post) {
-     //console.log(post);
-     //console.log(err);
-      if (err || !post) { 
-        return res.render('showPost', {  title : "A post", user : req.user , err: "nothing is found"});
-      }
-      return res.render('showPost', {  title : "A post", user : req.user , post:post, name : req.user.name,  
-        postContent: req.body.content1, errors: errors.array()});
-    });
-*/
   }else{
     //create a comment if there are no errors
     let com = new Post(  { content: req.body.content1, author:req.user._id, commentTo:req.body.commentto1}    );
