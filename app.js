@@ -24,6 +24,7 @@ mongoose.Promise = global.Promise;
 let mstr1= 'mongodb://localhost/node-auth';
 //var mstrPr = 'mongodb+srv://aleksandr04635:df368ie90@cluster0.vkcz0.mongodb.net/express_pug_blog?retryWrites=true&w=majority';
 let mstr = process.env.MONGODB_URI || mstr1;
+console.log("connecting to: "+mstr);
 mongoose.connect(mstr, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

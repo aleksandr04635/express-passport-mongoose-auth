@@ -75,8 +75,8 @@ check('username').trim().isLength({ min: 2 }).withMessage('Username Must Be at L
 check('password').trim().isLength({ min: 2 }).withMessage('Password Must Be at Least 2 Characters').escape(),
 function(req, res, next) {
   const errors = validationResult(req);
-  console.log("error 1= " );
-  console.log(errors);
+  //console.log("error 1= " );
+  //console.log(errors);
   if (!errors.isEmpty()) { 
     return res.render('register', {title: "Registration page", name: req.body.name, username : req.body.username,
        password: req.body.password, errors: errors.array()});
@@ -84,8 +84,8 @@ function(req, res, next) {
   // registers a user...  
   User.register(new User({username : req.body.username, name: req.body.name }), req.body.password, function(err, user) {
     if (err) {
-      console.log("error 2= " +err);
-      console.log(req.body.password);
+      //console.log("error 2= " +err);
+      //console.log(req.body.password);
       if(err=="UserExistsError: A user with the given username is already registered"){
         return res.render('register', {title: "Registration page", name: req.body.name, username: req.body.username, 
           password: req.body.password, user : user , err: "A user with the given username is already registered"})
@@ -219,7 +219,7 @@ function(req, res, next){
 
 // logout
 userController.logout = function(req, res) {
-  console.log("logout");
+  console.log("logout"+req.user);
   req.logout();
   return res.redirect('/');
 }
@@ -296,7 +296,7 @@ userController.userPage = function(req, res) {
   .sort([['updatedAt', 'descending']])
    .exec(function (err, posts) {
     //console.log(post);
-    console.log(err);
+    //console.log(err);
     if (err || !posts){  
       return res.render('user', {  title : "All your posts", user : req.user , err: "nothing is found"});
     }else{
@@ -358,7 +358,7 @@ userController.postPage = function(req, res) {
           //find an array of comments to a given id of a post or a comment
           let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
           for (let i=0; i<coms.length; i++ ){
-            console.log(coms[i]._id);
+            //console.log(coms[i]._id);
             //decode html
             coms[i].content= decodeEntities(coms[i].content);
             //recursively call a function to find comments to a comment 
@@ -395,8 +395,8 @@ check('content1').trim().isLength({ min: 3 }).withMessage('Content Must Be at Le
 //.escape(),
 function(req, res, next) {
     const errors = validationResult(req);
-    console.log("req.pageYOffset:");
-    console.log(req.body.pageYOffset);
+    //console.log("req.pageYOffset:");
+    //console.log(req.body.pageYOffset);
   //req.body.topost passes to what post or coment a comment must be made  
   if (!errors.isEmpty()) { 
     Post.findById(req.body.topost)
@@ -414,7 +414,7 @@ function(req, res, next) {
             //find an array of comments to a given id of a post or a comment
             let coms= await Post.find({'commentTo':id}).populate('author').sort([['updatedAt', 'descending']]);
             for (let i=0; i<coms.length; i++ ){
-              console.log(coms[i]._id);
+              //console.log(coms[i]._id);
               //decode html
               coms[i].content= decodeEntities(coms[i].content);
               //recursively call a function to find comments to a comment 
@@ -445,8 +445,8 @@ function(req, res, next) {
   }else{
     //create a comment if there are no errors
     let com = new Post(  { content: req.body.content1, author:req.user._id, commentTo:req.body.commentto1}    );
-    console.log("Added comment");
-    console.log(com);
+    //console.log("Added comment");
+    //console.log(com);
     com.save(function (err) {
       if (err) { return next(err); }
       return res.redirect(`/posts/${req.body.topost}`);
