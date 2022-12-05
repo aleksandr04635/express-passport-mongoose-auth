@@ -395,6 +395,8 @@ check('content1').trim().isLength({ min: 3 }).withMessage('Content Must Be at Le
 //.escape(),
 function(req, res, next) {
     const errors = validationResult(req);
+    console.log("req.pageYOffset:");
+    console.log(req.body.pageYOffset);
   //req.body.topost passes to what post or coment a comment must be made  
   if (!errors.isEmpty()) { 
     Post.findById(req.body.topost)

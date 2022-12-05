@@ -26,11 +26,12 @@ mixin comments(post1)
         //-p test
         //-form(role='form', action='/createcomment', method='post', class="comform")
         form(role='form', action='', method='post', class="comform", id= com._id)
-          textarea(type='textarea', name='content1', class= "contentt", id='contentt1', placeholder='content' , required='true' ) #{(com._id==commentedTo)?(undefined===postContent ? '' : postContent):""}
+          textarea(type='textarea', name='content1', class= "contentt", id='contentt1', placeholder='content' , required='true' ) #{(com._id==commentedTo)?(undefined===postContent ?"" : postContent):""}
           br
           button(type='submit') Create a comment
           input(type='text', style="visibility :hidden", name='commentto1' , value=com._id)
           input(type='text', style="visibility :hidden", name='topost' , value=post._id)
+          input(type='text', style="visibility :hidden", name='pageYOffset' , value= (undefined===window ? '1' : window.pageYOffset))
         //-if there were errors in commenting shows an error only to a necessary comment  
         -if(com._id==commentedTo) 
           if errors
@@ -48,6 +49,8 @@ block content
   if post
     h3 A post:
     include post.pug
+    p Try adding comments with html for images stored elseware. They are stored in 
+     | databese in escaped form and are unescaped on rendering
     p Try adding comments that are too short (less than 3symbols)
     p Try adding comments to comments to see the result.
     p It's made by recursions both in database call(asynchronous) and template rendering.
@@ -55,6 +58,7 @@ block content
     P Yes, it can look better.
     //-var st=post._id
     //-h3 Make a comment:
+    //-button(onClick="alert(window.pageYOffset)") alert
     button(class="comformtoggle") Comment this
     //-form(role='form', action='/createcomment', method='post')
     form(role='form', action='', method='post', class="comform",  id=post._id)
