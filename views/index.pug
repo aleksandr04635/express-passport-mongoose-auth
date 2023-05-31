@@ -5,16 +5,19 @@ block content
       | Mongoose and Passport with passport-local-mongoose strategy of session authentification.
   //-br
   if mes
-   p.imp #{mes}
-  p You can change your browser window width to 
-    |see adaptiveness of design, register, make posts and view and comment them by clicking on respective links.
+   p.imp !{mes}
+  p The first loading of the page takes a lot of time because of free hosting.
+  p You can change your browser window width with developers' tools to see the adaptiveness of the design, sign up, sign in, 
+    |make posts and comment on them by clicking on respective links.
   p Try to create a post without being logged in.
+  p Click on a post link to see comment-adding functionality 
+    |with a comments tree made by recursive database call and rendering.
   p You can also click on author links to see all their posts.
   p Posts and comments, made by you, are highlighted by color.
   p How much of what you see I have made myself? I have started from 
    a(href="https://www.djamware.com/post/58bd823080aca7585c808ebf/nodejs-expressjs-mongoosejs-and-passportjs-authentication") this tutorial, 
-   | that makes only authenthification and have made everything else myself basing on miscellanious sources, switching from Bootstrap to plain CSS.
-  p I have made possible commenting comments by recursions both in database call and Pug template rendering, I have made up myself. 
+   | which makes only authentication, and have made everything else myself based on miscellaneous sources.
+  p I have made possible commenting comments by recursions both in database call and Pug template rendering, which I have made up myself based on nothing. 
   p You can see my code  
    a(href="https://github.com/aleksandr04635/express-passport-mongoose-auth") here.
   //-img(src="https://img2.joyreactor.cc/pics/post/%D0%9A%D0%B0%D1%80%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F-%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BD%D0%B8%D0%BA%D0%B0-%D0%A1%D0%BA%D0%B2%D0%BE%D1%80%D0%B5%D1%87%D0%BD%D0%B8%D0%BA-%D0%91%D0%B0%D1%8F%D0%BD-7717242.jpeg", alt="pic") 

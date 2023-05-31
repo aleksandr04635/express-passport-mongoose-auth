@@ -1,3 +1,4 @@
+const http = require("http");// only for ip from req
 var mongoose = require("mongoose");
 var passport = require("passport");
 var async = require('async');
@@ -36,7 +37,7 @@ userController.home = function(req, res) {
   let mes1="";
   if (!req.user){mes1="User unauthenticated";}
   if (req.user){
-    mes1=`Hello, user ${req.user.username}. Your session will end in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} 
+    mes1=`Hello, user ${req.user.username}. <br> Your IP is ${req.ip.slice(7,)}. <br> Your session will end in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} 
        minutes even if you close and open the browser`;
   // mes1=`Hello, user ${req.user.username}. Your session ID is ${req.sessionID} and your session expires in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} minutes.`;
   }
@@ -171,7 +172,7 @@ function(req, res, next){
                 //console.log("went here 1" );
                 return res.render('login' , {title: "Login page", username: req.body.username, password: req.body.password, err: err}); 
               } else {
-                console.log(`logined ${user.name}`);
+                console.log(`logined ${user.name} from IP ${req.socket.remoteAddress}`);
    //           console.log(req.body.username+" " + req.body.password);
 //              next(); // works
 //              retirection to were user wanted to  go
@@ -219,7 +220,7 @@ function(req, res, next){
 
 // logout
 userController.logout = function(req, res) {
-  console.log("logout"+req.user);
+  console.log("logout"+req.user.name);
   req.logout();
   return res.redirect('/');
 }

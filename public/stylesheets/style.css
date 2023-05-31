@@ -4,7 +4,7 @@
 html, body {
   /*height: 100%;*/
   margin: 0;
-  font-size: 14px;
+  font-size: 17px;
   font-family:  Helvetica, sans-serif;
 }
 .contentt{
@@ -112,7 +112,7 @@ html, body {
 }
 .navbar-header #great{
   font-weight: 700;
-  color: #ce1919;
+  color: #ce7a19;
 }
 
 @media screen and (max-width: 600px) {
