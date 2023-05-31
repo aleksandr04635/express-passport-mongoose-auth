@@ -29,7 +29,7 @@ mongoose.connect(mstr, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(( ) => { console.log( `connection succesful to ${mstr} `);})
+  .then(( ) => { console.log( `connection succesful to ${mstr} `);})  //, port ${process.env.PORT}
   .catch((err) => console.error(err));
 
 /*

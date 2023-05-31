@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "start_old": "node ./bin/www",
+    "start1": "node index.js",
+    "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "dev": "SET DEBUG=node-passport-auth:* & nodemon ./bin/www"
   },
