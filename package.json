@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "start1": "node ./bin/www",
+    "start1": "node app2.js",
+    "start2": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "dev": "SET DEBUG=node-passport-auth:* & nodemon ./bin/www"
   },
