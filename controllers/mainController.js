@@ -37,8 +37,8 @@ userController.home = function(req, res) {
   let mes1="";
   if (!req.user){mes1="User unauthenticated";}
   if (req.user){
-    mes1=`Hello, user ${req.user.username}. <br> Your IP is ${req.ip}. <br> Your session will end in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} //.slice(7,)
-       minutes even if you close and open the browser`;
+    mes1=`Hello, user ${req.user.username}. <br> Your IP is ${req.socket.remoteAddress}. <br> Your session will end in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} 
+       minutes even if you close and open the browser`;//.slice(7,)
   // mes1=`Hello, user ${req.user.username}. Your session ID is ${req.sessionID} and your session expires in ${(req.session.cookie.maxAge/1000/60).toFixed(0)} minutes.`;
   }
   // Find posts there field "title" exists at all
